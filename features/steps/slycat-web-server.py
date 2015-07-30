@@ -158,5 +158,5 @@ def step_impl(context):
 @then(u'I should not see a project on the front page')
 def step_impl(context):
   context.execute_steps(u'''given I am on the front page''')
-  with nose.tools.assert_raises(NoSuchElement):
+  with nose.tools.assert_raises(NoSuchElementException):
     context.browser.driver.find_element(By.XPATH, "//a[contains(@href,'" + context.pid + "')]")
