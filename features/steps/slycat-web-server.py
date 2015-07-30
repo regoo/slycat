@@ -43,21 +43,8 @@ class Driver():
     for entry in driver.get_log('browser'):
       print(entry)
 
-@given(u'the slycat servers are running')
+@given(u'a browser is open')
 def step_impl(context):
-  supervisord = subprocess.Popen(["supervisord", "-c", "/etc/supervisord.conf"], stdout=subprocess.PIPE)
-  values = {'success': ['sshd', 'couchdb', 'web-server', 'proxy-server', 'feed-server'], 'exited': ['couchdb-setup']}
-  expected = {}
-  for key in values:
-    for value in values[key]:
-      expected[re.compile(" ".join(["INFO", key + ":", value]))] = False
-  x = 0
-  while (not reduce(operator.and_, expected.values())) and x < 100:
-    x += 1
-    next_line = supervisord.stdout.readline()
-    for key in expected:
-      if key.search(next_line):
-        expected[key] = True
   context.browser = Driver()
 
 
