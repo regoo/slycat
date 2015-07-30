@@ -1,7 +1,7 @@
 Feature: Slycat Web Server
 
   Background:
-    Given the slycat servers are running
+    Given a running Slycat server
 
   Scenario: Create a project
     Given I am on the front page
