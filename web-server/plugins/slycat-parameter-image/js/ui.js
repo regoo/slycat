@@ -1,4 +1,10 @@
-define("slycat-parameter-image-model", ["slycat-server-root", "lodash", "knockout", "knockout-mapping", "slycat-web-client", "slycat-bookmark-manager", "slycat-dialog", "slycat-parameter-image-note-manager", "slycat-parameter-image-filter-manager", "d3", "URI", "slycat-parameter-image-scatterplot", "slycat-parameter-image-controls", "slycat-parameter-image-table", "slycat-color-switcher", "domReady!"], function(server_root, _, ko, mapping, client, bookmark_manager, dialog, NoteManager, FilterManager, d3, URI)
+define("slycat-parameter-image-model", 
+  ["slycat-server-root", "lodash", "knockout", "knockout-mapping", "slycat-web-client", 
+   "slycat-bookmark-manager", "slycat-dialog", "slycat-parameter-image-note-manager", 
+   "slycat-parameter-image-filter-manager", "d3", "URI", "Intercom", "slycat-parameter-image-scatterplot", 
+   "slycat-parameter-image-controls", "slycat-parameter-image-table", "slycat-color-switcher", 
+   "domReady!"], 
+  function(server_root, _, ko, mapping, client, bookmark_manager, dialog, NoteManager, FilterManager, d3, URI, Intercom)
 {
 //////////////////////////////////////////////////////////////////////////////////////////
 // Setup global variables.
@@ -45,6 +51,15 @@ var controls_ready = false;
 var sliders_ready = false;
 var image_uri = document.createElement("a");
 var layout = null;
+
+var intercom = Intercom.getInstance();
+
+intercom.on('selection', function(data) {
+  var sims = data.selected_simulations;
+  $("#scatterplot").scatterplot("option", "selection",  sims);
+  $("#controls").controls("option", "selection",  sims);
+  $("#table").table("option", "row-selection", sims);
+});
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Setup page layout.
@@ -1063,6 +1078,8 @@ function selected_simulations_changed(selection)
   });
   bookmarker.updateState( {"simulation-selection" : selection} );
   selected_simulations = selection;
+  // Emit coordination signal
+  intercom.emit('selection', {selected_simulations: selection});
 }
 
 function x_selection_changed(variable)
