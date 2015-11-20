@@ -1369,14 +1369,21 @@ window.addEventListener('load_saved_bookmark', function (e) {
       bookmark = state;
       // Time to start applying the new state.
       // Let's start with selection.
-      if("simulation-selection" in bookmark)
-        selected_simulations = bookmark["simulation-selection"];
-      else
-        selected_simulations = [];
-
+      selected_simulations = bookmark["simulation-selection"] !== undefined ? bookmark["simulation-selection"] : [];
       $("#scatterplot").scatterplot("option", "selection",  selected_simulations);
       $("#controls").controls("option", "selection",  selected_simulations);
       $("#table").table("option", "row-selection", selected_simulations);
+
+      // Colormap
+      var colormap = bookmark["colormap"] !== undefined ? bookmark["colormap"] : "night";
+      $("#color-switcher").colorswitcher("option", "colormap", colormap);
+      update_current_colorscale();
+      $("#table").table("option", "colorscale", colorscale);
+      $("#scatterplot-pane").css("background", $("#color-switcher").colorswitcher("get_background", colormap).toString());
+      $("#scatterplot").scatterplot("option", {
+        colorscale:    colorscale,
+        gradient: $("#color-switcher").colorswitcher("get_gradient_data", colormap),
+      });
 
       // Remember to clear any state that isn't in the new bookmark.
     });
