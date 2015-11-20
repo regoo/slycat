@@ -80,7 +80,7 @@
               <li role="separator" class="divider" data-bind="visible: model_bookmark_wizards().length && (saved_project_bookmarks().length || saved_model_bookmarks().length)"></li>
               <!-- ko foreach: saved_model_bookmarks -->
                 <li class="slycat-clickable">
-                  <a class="bookmark-link" data-bind="attr: {href:uri}">
+                  <a class="bookmark-link" data-bind="attr: {href:uri}, click: $parent.load_saved_bookmark">
                     <span>
                       <!-- <button type="button" class="btn btn-xs btn-warning" data-bind="click: $parent.edit_saved_bookmark"><span class="fa fa-pencil"></span></button> -->
                       <button type="button" class="btn btn-xs btn-danger bookmark-delete" title="Delete bookmark"

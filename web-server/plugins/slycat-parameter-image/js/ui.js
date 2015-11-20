@@ -1364,4 +1364,8 @@ function filters_changed(newValue)
   }
 }
 
+window.addEventListener('load_saved_bookmark', function (e) {
+    console.log('trying to load saved bookmark in ui.js: ', e.detail);
+});
+
 });
