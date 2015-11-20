@@ -137,6 +137,26 @@ define("slycat-bookmark-manager", ["slycat-server-root", "URI", "jquery", "lodas
       }
     }
 
+    manager.applyNewBookmark = function(new_bid, callback)
+    {
+      bid = new_bid;
+      state = {};
+      this.getState(function(state){
+        if(state != {})
+        {
+          updateURL(bid);
+          if(mid != null)
+            localStorage[mid] = bid;
+          callback(state);
+        }
+        else
+        {
+          // Unable to retrieve new bid, so do nothing.
+        }
+      });
+
+    }
+
     return manager;
   }
 

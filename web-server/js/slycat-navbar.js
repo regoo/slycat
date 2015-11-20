@@ -375,9 +375,6 @@ define("slycat-navbar", ["slycat-server-root", "slycat-web-client", "slycat-chan
 
       component.load_saved_bookmark = function(reference)
       {
-        console.log('you just clicked bookmark: ' + reference.bid);
-        console.log('we will try to load it for you now.');
-
         var evt = new CustomEvent('load_saved_bookmark', { detail: reference.bid });
         window.dispatchEvent(evt);
       }

@@ -1365,7 +1365,21 @@ function filters_changed(newValue)
 }
 
 window.addEventListener('load_saved_bookmark', function (e) {
-    console.log('trying to load saved bookmark in ui.js: ', e.detail);
+    bookmarker.applyNewBookmark(e.detail, function(state){
+      bookmark = state;
+      // Time to start applying the new state.
+      // Let's start with selection.
+      if("simulation-selection" in bookmark)
+        selected_simulations = bookmark["simulation-selection"];
+      else
+        selected_simulations = [];
+
+      $("#scatterplot").scatterplot("option", "selection",  selected_simulations);
+      $("#controls").controls("option", "selection",  selected_simulations);
+      $("#table").table("option", "row-selection", selected_simulations);
+
+      // Remember to clear any state that isn't in the new bookmark.
+    });
 });
 
 });
