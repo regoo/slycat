@@ -47,6 +47,8 @@ var image_uri = document.createElement("a");
 var layout = null;
 
 var filterxhr = null;
+// Choose some columns for the X and Y axes.
+var x_y_variables = [];
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Setup page layout.
@@ -280,8 +282,6 @@ function metadata_loaded()
   if(table_metadata && bookmark)
   {
     // Choose some columns for the X and Y axes.
-    var x_y_variables = [];
-
     // First add inputs and outputs to possible columns
     x_y_variables.push.apply(x_y_variables, input_columns);
     x_y_variables.push.apply(x_y_variables, output_columns);
@@ -936,6 +936,15 @@ function handle_image_variable_change(variable)
 
 
   // Get entire data column for current image variable and pass it to scatterplot and dendrogram
+  retrieve_images_column();
+
+  // Log changes to and bookmark the images variable ...
+  images_selection_changed(images_index);
+}
+
+function retrieve_images_column()
+{
+  // Get entire data column for current image variable and pass it to scatterplot and dendrogram
   $.ajax(
   {
     type : "GET",
@@ -948,13 +957,11 @@ function handle_image_variable_change(variable)
     },
     error: artifact_missing
   });
-
-  // Log changes to and bookmark the images variable ...
-  images_selection_changed(images_index);
 }
 
 function images_selection_changed(variable)
 {
+  // Get entire data column for current image variable and pass it to scatterplot and dendrogram
   $.ajax(
   {
     type : "POST",
@@ -1384,6 +1391,25 @@ window.addEventListener('load_saved_bookmark', function (e) {
         colorscale:    colorscale,
         gradient: $("#color-switcher").colorswitcher("get_gradient_data", colormap),
       });
+
+      // X Index
+      x_index = bookmark["x-selection"] !== undefined ? Number(bookmark["x-selection"]) : x_y_variables[0];
+      $("#table").table("option", "x-variable", x_index);
+      update_scatterplot_x(x_index);
+      $("#controls").controls("option", "x-variable", x_index);
+
+      // Y Index
+      y_index = bookmark["y-selection"] !== undefined ? Number(bookmark["y-selection"]) : x_y_variables[1 % x_y_variables.length];
+      $("#table").table("option", "y-variable", y_index);
+      update_scatterplot_y(y_index);
+      $("#controls").controls("option", "y-variable", y_index);
+
+      // Images Index
+      images_index = bookmark["images-selection"] !== undefined ? Number(bookmark["images-selection"]) : image_columns[0];
+      retrieve_images_column();
+      $("#controls").controls("option", "image-variable", images_index);
+      $("#table").table("option", "image-variable", images_index);
+      
 
       // Remember to clear any state that isn't in the new bookmark.
     });
