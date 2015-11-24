@@ -1375,14 +1375,73 @@ window.addEventListener('load_saved_bookmark', function (e) {
     bookmarker.applyNewBookmark(e.detail, function(state){
       bookmark = state;
       // Time to start applying the new state.
-      // Let's start with selection.
+
+      // Begin with setting variables
       selected_simulations = bookmark["simulation-selection"] !== undefined ? bookmark["simulation-selection"] : [];
+
+      var bookmarked_hidden_simulations = bookmark["hidden-simulations"] !== undefined ? bookmark["hidden-simulations"] : [];
+      while(hidden_simulations.length > 0) {
+        hidden_simulations.pop();
+      }
+      for(var i = 0; i < bookmarked_hidden_simulations.length; i++)
+      {
+        hidden_simulations.push(bookmarked_hidden_simulations[i]);
+      }
+
+      manually_hidden_simulations = bookmark["manually-hidden-simulations"] !== undefined ? bookmark["manually-hidden-simulations"] : [];
+
+
+
+    // To Do Next: clean this up to get the color variable working
+
+    var color_variable = null;
+    if("variable-selection" in bookmark)
+    {
+      table_options["variable-selection"] = [bookmark["variable-selection"]];
+      v_index = Number(bookmark["variable-selection"]);
+      color_variable = [bookmark["variable-selection"]];
+    }
+    else
+    {
+      table_options["variable-selection"] = [table_metadata["column-count"] - 1];
+      v_index = table_metadata["column-count"] - 1;
+      color_variable = table_metadata["column-count"] - 1;
+    }
+
+      // Changing the table variable updates the controls ...
+      $("#controls").controls("option", "color-variable", selection[0]);
+
+      // Handle changes to the table variable selection ...
+      handle_color_variable_change(selection[0]);
+
+      // Changing the color variable updates the table ...
+      $("#table").table("option", "variable-selection", [Number(variable)]);
+
+      // Handle changes to the color variable ...
+      handle_color_variable_change(variable);
+
+
+
+
+
+
+      var colormap = bookmark["colormap"] !== undefined ? bookmark["colormap"] : "night";
+      x_index = bookmark["x-selection"] !== undefined ? Number(bookmark["x-selection"]) : x_y_variables[0];
+      y_index = bookmark["y-selection"] !== undefined ? Number(bookmark["y-selection"]) : x_y_variables[1 % x_y_variables.length];
+      images_index = bookmark["images-selection"] !== undefined ? Number(bookmark["images-selection"]) : image_columns[0];
+
+
+      // Selected simulations.
       $("#scatterplot").scatterplot("option", "selection",  selected_simulations);
       $("#controls").controls("option", "selection",  selected_simulations);
       $("#table").table("option", "row-selection", selected_simulations);
 
+      // Hidden simulations
+      $("#table").table("option", "hidden_simulations", hidden_simulations);
+      $("#scatterplot").scatterplot("option", "hidden_simulations", hidden_simulations);
+      $("#controls").controls("option", "hidden_simulations", hidden_simulations);
+
       // Colormap
-      var colormap = bookmark["colormap"] !== undefined ? bookmark["colormap"] : "night";
       $("#color-switcher").colorswitcher("option", "colormap", colormap);
       update_current_colorscale();
       $("#table").table("option", "colorscale", colorscale);
@@ -1393,19 +1452,16 @@ window.addEventListener('load_saved_bookmark', function (e) {
       });
 
       // X Index
-      x_index = bookmark["x-selection"] !== undefined ? Number(bookmark["x-selection"]) : x_y_variables[0];
       $("#table").table("option", "x-variable", x_index);
       update_scatterplot_x(x_index);
       $("#controls").controls("option", "x-variable", x_index);
 
       // Y Index
-      y_index = bookmark["y-selection"] !== undefined ? Number(bookmark["y-selection"]) : x_y_variables[1 % x_y_variables.length];
       $("#table").table("option", "y-variable", y_index);
       update_scatterplot_y(y_index);
       $("#controls").controls("option", "y-variable", y_index);
 
       // Images Index
-      images_index = bookmark["images-selection"] !== undefined ? Number(bookmark["images-selection"]) : image_columns[0];
       retrieve_images_column();
       $("#controls").controls("option", "image-variable", images_index);
       $("#table").table("option", "image-variable", images_index);
