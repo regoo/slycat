@@ -370,6 +370,54 @@ $.widget("parameter_image.table",
       self.data.invalidate();
       self.grid.invalidate();
     }
+    else if(key == "sort-order")
+    {
+      self.options[key] = value;
+    }
+    else if(key == "sort-variable")
+    {
+      self.options[key] = value;
+    }
+  },
+
+  setSort: function()
+  {
+    var self = this;
+    self.data.set_sort(self.options["sort-variable"], self.options["sort-order"]);
+    self.data.get_indices("sorted", self.options["row-selection"], function(sorted_rows)
+    {
+      self.grid.invalidate();
+      self.trigger_row_selection = false;
+      self.grid.setSelectedRows(sorted_rows);
+      self.grid.resetActiveCell();
+      if(sorted_rows.length)
+        self.grid.scrollRowToTop(Math.min.apply(Math, sorted_rows));
+    });
+
+    // Go through all columns and set sort button icons, tooltips, and commands.
+    for(var i=0; i < self.columns.length; i++)
+    {
+      if(self.columns[i].id == Number(self.options["sort-variable"]))
+      {
+        if(self.options["sort-order"] == "asc")
+        {
+          self.columns[i].header.buttons[0].cssClass = "icon-sort-ascending";
+          self.columns[i].header.buttons[0].tooltip = "Sort descending";
+          self.columns[i].header.buttons[0].command = "sort-descending";
+        }
+        else
+        {
+          self.columns[i].header.buttons[0].cssClass = "icon-sort-descending";
+          self.columns[i].header.buttons[0].tooltip = "Sort ascending";
+          self.columns[i].header.buttons[0].command = "sort-ascending";
+        }
+      } else {
+        self.columns[i].header.buttons[0].cssClass = "icon-sort-off";
+        self.columns[i].header.buttons[0].tooltip = "Sort ascending";
+        self.columns[i].header.buttons[0].command = "sort-ascending";
+      }
+      self.grid.updateColumnHeader(self.columns[i].id);
+    }
   },
 
   _set_selected_x: function()

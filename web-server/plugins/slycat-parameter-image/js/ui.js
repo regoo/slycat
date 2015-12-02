@@ -907,6 +907,19 @@ function selected_colormap_changed(colormap)
 
 function handle_color_variable_change(variable)
 {
+  handle_update_for_color_variable_change(variable);
+
+  $.ajax(
+  {
+    type : "POST",
+    url : server_root + "events/models/" + model_id + "/select/variable/" + variable
+  });
+
+  bookmarker.updateState({"variable-selection" : variable});
+}
+
+function handle_update_for_color_variable_change(variable)
+{
   v_index = Number(variable);
 
   if(v_index == table_metadata["column-count"] - 1)
@@ -920,14 +933,6 @@ function handle_color_variable_change(variable)
   {
     update_v(variable);
   }
-
-  $.ajax(
-  {
-    type : "POST",
-    url : server_root + "events/models/" + model_id + "/select/variable/" + variable
-  });
-
-  bookmarker.updateState({"variable-selection" : variable});
 }
 
 function handle_image_variable_change(variable)
@@ -1396,10 +1401,23 @@ window.addEventListener('load_saved_bookmark', function (e) {
       y_index = bookmark["y-selection"] !== undefined ? Number(bookmark["y-selection"]) : x_y_variables[1 % x_y_variables.length];
       images_index = bookmark["images-selection"] !== undefined ? Number(bookmark["images-selection"]) : image_columns[0];
 
+      var sort_variable = undefined;
+      var sort_order = undefined;
+      if("sort-variable" in bookmark && "sort-order" in bookmark)
+      {
+        sort_variable = bookmark["sort-variable"];
+        sort_order = bookmark["sort-order"];
+      }
+
+      // Sort variable and order
+      $("#table").table("option", "sort-variable", sort_variable);
+      $("#table").table("option", "sort-order", sort_order);
+      $("#table").table("setSort");
+
       // Color variable
       $("#controls").controls("option", "color-variable", color_variable);
       $("#table").table("option", "variable-selection", [Number(color_variable)]);
-      handle_color_variable_change(color_variable);
+      handle_update_for_color_variable_change(color_variable);
 
       // Selected simulations.
       $("#scatterplot").scatterplot("option", "selection",  selected_simulations);
