@@ -1401,8 +1401,8 @@ window.addEventListener('load_saved_bookmark', function (e) {
       y_index = bookmark["y-selection"] !== undefined ? Number(bookmark["y-selection"]) : x_y_variables[1 % x_y_variables.length];
       images_index = bookmark["images-selection"] !== undefined ? Number(bookmark["images-selection"]) : image_columns[0];
 
-      var sort_variable = undefined;
-      var sort_order = undefined;
+      var sort_variable = null;
+      var sort_order = null;
       if("sort-variable" in bookmark && "sort-order" in bookmark)
       {
         sort_variable = bookmark["sort-variable"];

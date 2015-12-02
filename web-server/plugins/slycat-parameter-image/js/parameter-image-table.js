@@ -397,7 +397,7 @@ $.widget("parameter_image.table",
     // Go through all columns and set sort button icons, tooltips, and commands.
     for(var i=0; i < self.columns.length; i++)
     {
-      if(self.columns[i].id == Number(self.options["sort-variable"]))
+      if(self.columns[i].id == self.options["sort-variable"])
       {
         if(self.options["sort-order"] == "asc")
         {
