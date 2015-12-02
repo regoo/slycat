@@ -1377,6 +1377,7 @@ window.addEventListener('load_saved_bookmark', function (e) {
       // Time to start applying the new state.
 
       // Begin with setting variables
+      var color_variable = bookmark["variable-selection"] !== undefined ? bookmark["variable-selection"] : table_metadata["column-count"] - 1;
       selected_simulations = bookmark["simulation-selection"] !== undefined ? bookmark["simulation-selection"] : [];
 
       var bookmarked_hidden_simulations = bookmark["hidden-simulations"] !== undefined ? bookmark["hidden-simulations"] : [];
@@ -1390,46 +1391,15 @@ window.addEventListener('load_saved_bookmark', function (e) {
 
       manually_hidden_simulations = bookmark["manually-hidden-simulations"] !== undefined ? bookmark["manually-hidden-simulations"] : [];
 
-
-
-    // To Do Next: clean this up to get the color variable working
-
-    var color_variable = null;
-    if("variable-selection" in bookmark)
-    {
-      table_options["variable-selection"] = [bookmark["variable-selection"]];
-      v_index = Number(bookmark["variable-selection"]);
-      color_variable = [bookmark["variable-selection"]];
-    }
-    else
-    {
-      table_options["variable-selection"] = [table_metadata["column-count"] - 1];
-      v_index = table_metadata["column-count"] - 1;
-      color_variable = table_metadata["column-count"] - 1;
-    }
-
-      // Changing the table variable updates the controls ...
-      $("#controls").controls("option", "color-variable", selection[0]);
-
-      // Handle changes to the table variable selection ...
-      handle_color_variable_change(selection[0]);
-
-      // Changing the color variable updates the table ...
-      $("#table").table("option", "variable-selection", [Number(variable)]);
-
-      // Handle changes to the color variable ...
-      handle_color_variable_change(variable);
-
-
-
-
-
-
       var colormap = bookmark["colormap"] !== undefined ? bookmark["colormap"] : "night";
       x_index = bookmark["x-selection"] !== undefined ? Number(bookmark["x-selection"]) : x_y_variables[0];
       y_index = bookmark["y-selection"] !== undefined ? Number(bookmark["y-selection"]) : x_y_variables[1 % x_y_variables.length];
       images_index = bookmark["images-selection"] !== undefined ? Number(bookmark["images-selection"]) : image_columns[0];
 
+      // Color variable
+      $("#controls").controls("option", "color-variable", color_variable);
+      $("#table").table("option", "variable-selection", [Number(color_variable)]);
+      handle_color_variable_change(color_variable);
 
       // Selected simulations.
       $("#scatterplot").scatterplot("option", "selection",  selected_simulations);
