@@ -765,6 +765,10 @@ $.widget("parameter_image.controls",
       self._set_show_all();
       self._set_hide_show_selection_status();
     }
+    else if(key == 'auto-scale')
+    {
+      self._set_auto_scale();
+    }
   },
 });
 });

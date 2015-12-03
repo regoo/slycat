@@ -1123,6 +1123,17 @@ function y_selection_changed(variable)
 
 function auto_scale_option_changed(auto_scale_value)
 {
+  apply_auto_scale_option(auto_scale_value);
+  $.ajax(
+  {
+    type : "POST",
+    url : server_root + "events/models/" + model_id + "/auto-scale/" + auto_scale
+  });
+  bookmarker.updateState( {"auto-scale" : auto_scale} );
+}
+
+function apply_auto_scale_option(auto_scale_value)
+{
   auto_scale = auto_scale_value;
   if(hidden_simulations.length > 0)
   {
@@ -1135,12 +1146,6 @@ function auto_scale_option_changed(auto_scale_value)
   {
     $("#scatterplot").scatterplot("option", "auto-scale", auto_scale);
   }
-  $.ajax(
-  {
-    type : "POST",
-    url : server_root + "events/models/" + model_id + "/auto-scale/" + auto_scale
-  });
-  bookmarker.updateState( {"auto-scale" : auto_scale} );
 }
 
 function open_images_changed(selection)
@@ -1382,6 +1387,7 @@ window.addEventListener('load_saved_bookmark', function (e) {
       // Time to start applying the new state.
 
       // Begin with setting variables
+      auto_scale = bookmark["auto-scale"] !== undefined ? bookmark["auto-scale"] : true;
       var color_variable = bookmark["variable-selection"] !== undefined ? bookmark["variable-selection"] : table_metadata["column-count"] - 1;
       selected_simulations = bookmark["simulation-selection"] !== undefined ? bookmark["simulation-selection"] : [];
 
@@ -1413,6 +1419,10 @@ window.addEventListener('load_saved_bookmark', function (e) {
       $("#table").table("option", "sort-variable", sort_variable);
       $("#table").table("option", "sort-order", sort_order);
       $("#table").table("setSort");
+
+      // Auto Scale
+      apply_auto_scale_option(auto_scale);
+      $("#controls").controls("option", "auto-scale",  auto_scale);
 
       // Color variable
       $("#controls").controls("option", "color-variable", color_variable);
@@ -1453,6 +1463,13 @@ window.addEventListener('load_saved_bookmark', function (e) {
       retrieve_images_column();
       $("#controls").controls("option", "image-variable", images_index);
       $("#table").table("option", "image-variable", images_index);
+
+      // todo
+
+      // Open Images
+      //bookmarker.updateState( {"open-images-selection" : selection} );
+
+
       
 
       // Remember to clear any state that isn't in the new bookmark.
