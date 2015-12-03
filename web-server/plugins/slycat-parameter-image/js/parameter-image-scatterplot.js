@@ -1820,5 +1820,36 @@ define("slycat-parameter-image-scatterplot", ["slycat-server-root", "d3", "URI",
     });
     self._open_images(images);
   },
+
+  set_pins: function(open_images)
+  {
+    var self = this;
+
+    self.options.open_images = open_images;
+
+    // Close existing pins
+    self.close_all_simulations();
+
+    // Transform the list of initial images so we can pass them to _open_images()
+    var width = Number(self.svg.attr("width"));
+    var height = Number(self.svg.attr("height"));
+
+    var images = [];
+    self.options.open_images.forEach(function(image, index)
+    {
+      images.push({
+        index : image.index,
+        uri : image.uri.trim(),
+        image_class : "open-image",
+        x : width * image.relx,
+        y : height * image.rely,
+        width : image.width,
+        height : image.height,
+        target_x : self.x_scale(self.options.x[image.index]),
+        target_y : self.y_scale(self.options.y[image.index]),
+        });
+    });
+    self._open_images(images);
+  },
   });
 });

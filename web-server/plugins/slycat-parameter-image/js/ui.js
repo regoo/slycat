@@ -1415,6 +1415,8 @@ window.addEventListener('load_saved_bookmark', function (e) {
         sort_order = bookmark["sort-order"];
       }
 
+      open_images = bookmark["open-images-selection"] !== undefined ? bookmark["open-images-selection"] : [];
+
       // Sort variable and order
       $("#table").table("option", "sort-variable", sort_variable);
       $("#table").table("option", "sort-order", sort_order);
@@ -1464,15 +1466,9 @@ window.addEventListener('load_saved_bookmark', function (e) {
       $("#controls").controls("option", "image-variable", images_index);
       $("#table").table("option", "image-variable", images_index);
 
-      // todo
-
       // Open Images
-      //bookmarker.updateState( {"open-images-selection" : selection} );
-
-
-      
-
-      // Remember to clear any state that isn't in the new bookmark.
+      $("#controls").controls("option", "open_images", open_images);
+      $("#scatterplot").scatterplot("set_pins", open_images);
     });
 });
 
