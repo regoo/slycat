@@ -1469,6 +1469,9 @@ window.addEventListener('load_saved_bookmark', function (e) {
       // Open Images
       $("#controls").controls("option", "open_images", open_images);
       $("#scatterplot").scatterplot("set_pins", open_images);
+
+      //todo 
+      // filters
     });
 });
 
