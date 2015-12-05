@@ -183,4 +183,3 @@ Feature: Slycat Agent
       | source type | target type |
       | jpeg        | mp4         |
       | jpeg        | webm        |
-
